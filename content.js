@@ -1,33 +1,30 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('HELLOOOOO I AM LISTENING')
+const clickButton = (source) => {
+  const button = source.getElementsByTagName('button')[0];
+  // can also use getElementsByClassName('tw-button--success')[0]
+  if (button) {
+    console.log('Bonus available, clicking...');
+    button.click();
+    console.log('Click succcessful! :D');
+  };
+};
 
-  if (request.action === "clickBonusBox") {
-    const MutationObserver = window.MutationObserver || window.WebKitMutationObserver
-    const targetNode = document.getElementsByClassName("community-points-summary")[0];
-    const observerOptions = {
-      childList: true,
-      attributes: true,
-      subtree: true
-    }
+chrome.runtime.onMessage.addListener((request) => {
+  console.log('HELLOOOOO I AM LISTENING');
 
-    targetNode.getElementsByTagName('button')[1].click();
+  if (request.action === "checkForBonus") {
+    console.log('Waiting for bonus...');
+
+    const MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+    const targetNode = document.getElementsByClassName("community-points-summary")[0].children[1];
+    clickButton(targetNode);
 
     const observer = new MutationObserver((mutations) => {
-      // what we want to fire when mutation on target node is found
       mutations.forEach(mutation => {
-        if (mutation.type === 'childList') {
-          const bonusButton = mutation.target.getElementsByTagName('button')[1]
-          || targetNode.getElementsByTagName('button')[1];
-
-          if (bonusButton) {
-            console.log('Bonus available, clicking...');
-            bonusButton.click();
-            sendResponse({ clicked: "Bonus points clicked!" });
-          }
-        }
+        clickButton(mutation.target);
       })
     });
 
-    observer.observe(targetNode, observerOptions);
+    observer.observe(targetNode, { childList: true });
   }
 });
