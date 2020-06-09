@@ -1,6 +1,6 @@
 {
   "name": "Twitch Points Autoclicker",
-  "version": "1.1",
+  "version": "1.1.0",
   "description": "Clicks the channel points box when available",
   "permissions": ["activeTab", "tabs", "declarativeContent"],
   "background": {
